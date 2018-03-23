@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 class Calibrator:
-    def calibrate():
+    def calibrate(self, lower, upper):
         cap = cv2.VideoCapture(0)
 
         while(1):
@@ -16,12 +16,7 @@ class Calibrator:
             # Convert BGR to HSV
             hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-            # define range of blue color in HSV
-            lower_blue = np.array([50,100,50])
-            upper_blue = np.array([200,255,180])
-
-            # Threshold the HSV image to get only blue colors
-            mask = cv2.inRange(hsv, lower_blue, upper_blue)
+            mask = cv2.inRange(hsv, lower, upper)
             # Bitwise-AND mask and original image
             res = cv2.bitwise_and(frame,frame, mask= mask)
 
@@ -34,6 +29,7 @@ class Calibrator:
             if key_press == ord(' '):
                 match = frame[200:350, 450:750]
                 cv2.destroyAllWindows()
+                cap.release()
                 return(match)
                 break
 
