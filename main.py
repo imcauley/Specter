@@ -22,9 +22,29 @@ while(True):
 
     track = Tracker()
     match = track.find_eyes(eyes, frame)
-    if(len(match) > 0):
-        print(match[0].pt[0])
 
+
+    total_x = 0
+    total_y = 0
+
+    avg_x = 0
+    avg_y = 0
+
+    if(len(match) > 0):
+        for m in match:
+            #if(m[1].distance > 40):
+            total_x = total_x + m[0].pt[0]
+            total_y = total_y + m[0].pt[1]
+
+        avg_x = total_x / len(match)
+        avg_y = total_y / len(match)
+
+    avg_x = int(avg_x)
+    avg_y = int(avg_y)
+
+
+    cv2.circle(rgb,(avg_x,avg_y), 5, (0,0,255), 1)
+    cv2.imshow('frame', rgb)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 

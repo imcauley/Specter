@@ -21,4 +21,5 @@ class Tracker:
         # Sort them in the order of their distance.
         matches = sorted(matches, key = lambda x:x.distance)
 
-        return(kp1)
+        zipped = zip(kp1,matches)
+        return(list(zipped))
