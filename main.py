@@ -4,16 +4,14 @@ from calibrator import Calibrator
 from tracker import Tracker
 from matplotlib import pyplot as plt
 
-
-lower = np.array([50,100,50])
-upper = np.array([200,255,180])
-
 cal = Calibrator()
-eyes = cal.calibrate(lower, upper)
+eyes, lower, upper = cal.calibrate()
 
 #cv2.imwrite('eyes.jpg', eyes)
 
 cap = cv2.VideoCapture(0)
+prev_x = 0
+prev_y = 0
 
 while(True):
     ret, frame = cap.read()
@@ -21,7 +19,7 @@ while(True):
     rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2BGRA)
 
     track = Tracker()
-    match = track.find_eyes(eyes, frame)
+    match = track.find_eyes(eyes, frame, lower, upper)
 
 
     total_x = 0
@@ -42,9 +40,20 @@ while(True):
     avg_x = int(avg_x)
     avg_y = int(avg_y)
 
+    if((avg_x - prev_x) < 100):
+        avg_x = int((avg_x + prev_x) / 2)
+
+    if((avg_y - prev_y) < 100):
+        avg_y = int((avg_y + prev_y) / 2)
+
 
     cv2.circle(rgb,(avg_x,avg_y), 5, (0,0,255), 1)
+    frame = cv2.flip(frame, 1 )
     cv2.imshow('frame', rgb)
+
+    prev_x = avg_x
+    prev_y = avg_y
+
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
