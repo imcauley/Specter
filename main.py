@@ -1,17 +1,20 @@
 import cv2
 import numpy as np
+import time
+import csv
 from calibrator import Calibrator
 from tracker import Tracker
-from matplotlib import pyplot as plt
+
 
 cal = Calibrator()
 eyes, lower, upper = cal.calibrate()
 
-#cv2.imwrite('eyes.jpg', eyes)
 
 cap = cv2.VideoCapture(0)
 prev_x = 0
 prev_y = 0
+
+data = []
 
 while(True):
     ret, frame = cap.read()
@@ -54,8 +57,18 @@ while(True):
     prev_x = avg_x
     prev_y = avg_y
 
+    data.append([avg_x, avg_y])
+
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
+
+
+
+timestr = time.strftime("%Y%m%d-%H%M%S")
+
+with open((timestr + '.csv'), 'w') as f:
+    writer = csv.writer(f)
+    writer.writerows(data)
 
 cap.release()
 cv2.destroyAllWindows()

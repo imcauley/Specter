@@ -2,18 +2,33 @@ import numpy as np
 import cv2
 from matplotlib import pyplot as plt
 
-#lower = np.array([20,70,20])
-#upper = np.array([230,255,200])
-
 class Tracker:
     def find_eyes(self, eyes, frame, lower, upper):
+        """
+        @author Isaac McAuley
+        @date April 3, 2018
+
+        find_eyes()
+
+        input:
+            -eyes, a 2d matrix of a captured picture of the
+                    users eyes
+            -frame, the current frame for which the eyes are
+                    to be found
+            -lower, lower colour range
+            -upper, upper colour range
+
+        output:
+            -a list of tuples, first is the point on the frame
+                where a matches point is found, second is a
+                cv2 match object
+        """
 
         eyes_hsv = cv2.cvtColor(eyes, cv2.COLOR_BGR2HSV)
         frame_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
         eyes_mask = cv2.inRange(eyes_hsv, lower, upper)
         frame_mask = cv2.inRange(frame_hsv, lower, upper)
-
 
         # Initiate SIFT detector
         orb = cv2.ORB_create()

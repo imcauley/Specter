@@ -3,30 +3,44 @@ import numpy as np
 
 class Calibrator:
     def calibrate(self):
+        """
+        @author Isaac McAuley
+        @date April 3, 2018
+
+        calibrate()
+
+        input:
+            -none
+
+        output:
+            -a 2d rgb image of the subsection of the frame
+
+        """
         cap = cv2.VideoCapture(0)
 
         while(1):
 
             # Take each frame
             _, frame = cap.read()
+            # Create empty object
             match = np.zeros((300,150,3), np.uint8)
+            # Flip the image horizontally so the output looks normal
             frame = cv2.flip(frame, 1 )
 
 
-            # Convert BGR to HSV
+            #Draw rectangle on frame
+            show_frame = frame
+            cv2.rectangle(show_frame,(450,200),(750,350),(255,0,0),3)
 
-            # Bitwise-AND mask and original image
-            #res = cv2.bitwise_and(frame,frame, mask= mask)
+            #Show fram on screen
+            cv2.imshow('frame',show_frame)
 
-            cv2.rectangle(frame,(450,200),(750,350),(255,0,0),3)
-
-            cv2.imshow('frame',frame)
-            #cv2.imshow('mask',mask)
-
+            #Get key press
             key_press = cv2.waitKey(1) & 0xFF
             if key_press == ord(' '):
                 match = frame[200:350, 450:750]
                 min_skin, max_skin = self.get_minmax(match)
+
                 cv2.destroyAllWindows()
                 cap.release()
                 return(match, min_skin, max_skin)
@@ -37,6 +51,19 @@ class Calibrator:
                 break
 
     def get_minmax(self, skin):
+        """
+        @author Isaac McAuley
+        @date April 3, 2018
+
+        get_minmax()
+
+        input:
+            -2d image
+
+        output:
+            -tuple, first is the min shade in the frame, second
+                    is the max shade of the frame
+        """
         max_skin = [0,0,0]
         min_skin = [255,255,255]
 
