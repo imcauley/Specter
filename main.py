@@ -4,6 +4,7 @@ import time
 import csv
 from calibrator import Calibrator
 from tracker import Tracker
+from graph import Graph
 
 
 cal = Calibrator()
@@ -72,3 +73,8 @@ with open((timestr + '.csv'), 'w') as f:
 
 cap.release()
 cv2.destroyAllWindows()
+
+if input("Generate graphs? y/n: ") == 'y':
+    graph = Graph(timestr)
+    graph.input_data = graph.parse_data()
+    graph.generate_graph()
