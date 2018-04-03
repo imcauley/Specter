@@ -1,6 +1,5 @@
 import csv
 import numpy as np
-from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.pyplot as plt
 
 class Graph:
@@ -12,22 +11,17 @@ class Graph:
         self.intensity = [[]]
         
     def parse_data(self):
-        with open(self.file_name) as csvfile:
-            data = csv.reader(csvfile, delimiter='\n')
-            for row in data:
-                self.input_data.append(eval(row[0]))
-        return self.input_data
-                
-    def generate_intensity(self, coordinates, width, height):
-        self.intensity = [[0 for x in range(width)] for y in range(height)]
-        for x in range(width):
-            for y in range(height):
-                self.intensity[x][y] = coordinates.count([x,y])/10
-        return self.intensity
+        self.input_data = np.genfromtxt(self.file_name + '.csv',delimiter=',')
+        self.x = self.input_data[:,0]
+        self.y = self.input_data[:,1]
+        return self.x,self.y
 
-    def generate_graph(self, intensity):
-        plt.imshow(intensity, cmap='hot', interpolation = 'nearest')
-        plt.savefig('foo.png', bbox_inches='tight')
-        plt.savefig('foo.pdf')
-        plt.show()
+    def generate_graph(self):
+        heatmap, xedges, yedges = np.histogram2d(self.x,self.y,bins=100)
+        extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]]
+        plt.clf()
+        plt.imshow(heatmap.T, extent=extent, origin='lower')
+        plt.savefig(self.file_name + '.png', bbox_inches='tight')
+        plt.savefig(self.file_name + '.pdf')
+        #plt.show()
         
